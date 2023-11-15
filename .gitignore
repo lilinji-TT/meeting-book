@@ -1,5 +1,5 @@
 # 忽略node-modules
-meeting-room-booking-server/node_modules/*
+meeting-room-booking-server/node_modules
 
 meeting-room-booking-server/dist
 
