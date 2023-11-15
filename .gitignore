@@ -1,4 +1,7 @@
 # 忽略node-modules
-meeting-room-book-server/node_modules/*
+meeting-room-booking-server/node_modules/*
+
+meeting-room-booking-server/dist
 
 meeting-app/node_modules/*
+
