@@ -1,2 +1,4 @@
 # 忽略node-modules
 meeting-room-book/node_modules/*
+
+meeting-app/node_modules/*
