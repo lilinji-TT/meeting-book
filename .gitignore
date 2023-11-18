@@ -3,7 +3,8 @@ meeting-room-booking-server/node_modules
 
 meeting-room-booking-server/dist
 
+meeting-room-booking-server/env
+
 meeting-app/node_modules/*
 
-./env
 
