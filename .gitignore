@@ -5,3 +5,5 @@ meeting-room-booking-server/dist
 
 meeting-app/node_modules/*
 
+./env
+
