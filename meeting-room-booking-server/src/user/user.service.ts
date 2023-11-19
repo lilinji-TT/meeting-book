@@ -86,6 +86,8 @@ export class UserService {
       throw new HttpException('密码错误', HttpStatus.BAD_REQUEST);
     }
 
+    delete user.password;
+
     const loginVo = new LoginUserVo();
 
     loginVo.userInfo = {
