@@ -51,8 +51,8 @@ export function Login() {
         </Form.Item>
         <Form.Item {...layout2}>
           <div className="links">
-            <a href="http://www.baidu.com">创建账号</a>
-            <a href="http://www.baidu.com">忘记密码</a>
+            <a href="/register">创建账号</a>
+            <a href="/update_password">忘记密码</a>
           </div>
         </Form.Item>
         <Form.Item {...layout2}>
