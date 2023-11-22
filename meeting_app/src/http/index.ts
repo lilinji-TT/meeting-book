@@ -69,7 +69,8 @@ instance.interceptors.response.use(
 );
 
 async function refreshToken() {
-  if (!localStorage.getItem("refresh_token")) {
+  const refresh_token = localStorage.getItem("refresh_token");
+  if (!refresh_token) {
     return {
       status: 401,
       data: "token 已失效，请重新登录",
@@ -78,7 +79,7 @@ async function refreshToken() {
 
   const res = await instance.get("/user/refresh", {
     params: {
-      refreshToken: localStorage.getItem("refresh_token"),
+      refreshToken: refresh_token,
     },
   });
 
