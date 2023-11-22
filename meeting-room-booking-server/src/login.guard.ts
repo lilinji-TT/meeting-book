@@ -15,6 +15,7 @@ import { Role } from './user/entities/role.entity';
 interface JwtUserData {
   userId: number;
   username: string;
+  email: string;
   roles: Role[];
   permissions: Permission[];
 }
@@ -50,17 +51,18 @@ export class LoginGuard implements CanActivate {
 
     const authorization = request.headers['authorization'];
 
-    if (!authorization) {
-      throw new UnloginException();
-    }
-
     try {
+      if (!authorization) {
+        throw new UnloginException();
+      }
+
       const token = authorization.split(' ')[1];
       const data = this.jwtService.verify<JwtUserData>(token);
 
       request.user = {
         userId: data.userId,
         username: data.username,
+        email: data.email,
         roles: data.roles,
         permission: data.permissions,
       };

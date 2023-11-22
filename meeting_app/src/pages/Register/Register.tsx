@@ -60,7 +60,7 @@ export function Register() {
   }, []);
 
   return (
-    <div>
+    <div id="register-container">
       <h1>会议室预订系统</h1>
       <Form form={form} onFinish={onFinish} colon={false} autoComplete="off">
         <Form.Item

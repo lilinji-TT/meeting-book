@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   DefaultValuePipe,
@@ -7,13 +8,18 @@ import {
   Post,
   Query,
   UnauthorizedException,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { FileInterceptor } from '@nestjs/platform-express';
+import * as path from 'path';
 import { AuthService } from 'src/auth/auth.service';
 import { RequireLogin, UserInfo } from 'src/custom.decorator';
 import { EmailService } from 'src/email/email.service';
 import { RedisService } from 'src/redis/redis.service';
+import { multerStorage } from 'src/utils/multer-storage';
 import { generateParseIntPipe } from 'src/utils/pipe';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register.dto';
@@ -39,6 +45,31 @@ export class UserController {
   @Inject(ConfigService)
   private configService: ConfigService;
   constructor(private readonly userService: UserService) {}
+
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      dest: 'uploads',
+      storage: multerStorage,
+      limits: {
+        fileSize: 1024 * 1024 * 3,
+      },
+      fileFilter(req, file, callback) {
+        const extname = path.extname(file.originalname);
+        if (['.png', '.jpg', '.gif'].indexOf(extname) === -1) {
+          return callback(
+            new BadRequestException('只允许png、jpg、gif格式'),
+            false,
+          );
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    console.log(file);
+    return file.path;
+  }
 
   @Post('register')
   async register(@Body() registerUser: RegisterUserDto) {
@@ -139,12 +170,8 @@ export class UserController {
 
   // 传递数组代表两个路由都是同一个hanler处理
   @Post(['update_password', 'admin/update_password'])
-  @RequireLogin()
-  async updatePassword(
-    @UserInfo('userId') userId: number,
-    @Body() passwordDto: UpdateUserPasswordDto,
-  ) {
-    return await this.userService.updatePassword(userId, passwordDto);
+  async updatePassword(@Body() passwordDto: UpdateUserPasswordDto) {
+    return await this.userService.updatePassword(passwordDto);
   }
 
   @Get('update_password/captcha')
@@ -175,7 +202,7 @@ export class UserController {
   }
 
   @Get('update/captcha')
-  async updateCaptcha(@Query('address') address: string) {
+  async updateCaptcha(@Query('email') address: string) {
     const code = Math.random().toString().slice(2, 8);
 
     await this.redisService.set(

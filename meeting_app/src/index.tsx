@@ -1,16 +1,24 @@
-import { ErrorPage } from "./pages/ErrorPage/ErrorPage";
-import { Login } from "./pages/Login/Login";
-import { Register } from "./pages/Register/Register";
-import { UpdatePassword } from "./pages/UpdatePassword/UpdatePassword";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
+import { ErrorPage } from "./pages/ErrorPage/ErrorPage";
+import { Index } from "./pages/Index/Index";
+import { Login } from "./pages/Login/Login";
+import { Register } from "./pages/Register/Register";
+import { UpdateInfo } from "./pages/UpdateInfo/UpdateInfo";
+import { UpdatePassword } from "./pages/UpdatePassword/UpdatePassword";
 
 const routes = [
   {
     path: "/",
-    element: <div>index</div>,
+    element: <Index />,
     errorElement: <ErrorPage />,
+    children: [
+      {
+        path: "update_info",
+        element: <UpdateInfo />,
+      },
+    ],
   },
   {
     path: "login",
