@@ -1,7 +1,13 @@
 #menu-container {
   display: flex;
   flex-direction: row;
+  width: 80%;
+  margin-left: 10%;
 }
 #menu-container .menu-area {
   width: 200px;
+}
+
+#menu-container .content-area {
+  flex: 1;
 }

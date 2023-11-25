@@ -4,9 +4,9 @@
   flex-direction: column;
 }
 #index-container .header {
-  height: 80px;
+  height: 50px;
   border-bottom: 1px solid #aaa;
-  line-height: 80px;
+  line-height: 50px;
   display: flex;
   justify-content: space-between;
   padding: 0 20px;
@@ -16,14 +16,15 @@
 }
 
 #index-container .icon {
-  font-size: 40px;
-  margin-top: 20px;
+  font-size: 30px;
+  margin-top: 10px;
 }
 #index-container .body {
   flex: 1;
 }
 
 #index-container .sys_name {
+  font-size: 14px;
   text-decoration: none;
   color: #000;
 }
