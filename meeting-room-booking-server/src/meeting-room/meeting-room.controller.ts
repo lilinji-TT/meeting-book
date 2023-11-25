@@ -13,21 +13,25 @@ import { generateParseIntPipe } from 'src/utils/pipe';
 import { CreateMeetingRoomDto } from './dto/create-meeting-room.dto';
 import { UpdateMeetingRoomDto } from './dto/update-meeting-room.dto';
 import { MeetingRoomService } from './meeting-room.service';
+import { RequireLogin } from 'src/custom.decorator';
 
 @Controller('meeting-room')
 export class MeetingRoomController {
   constructor(private readonly meetingRoomService: MeetingRoomService) {}
 
+  @RequireLogin()
   @Post('create')
   async create(@Body() meetingRoomDto: CreateMeetingRoomDto) {
     return await this.meetingRoomService.create(meetingRoomDto);
   }
 
+  @RequireLogin()
   @Put('update')
   async update(@Body() meetingRoomDto: UpdateMeetingRoomDto) {
     return await this.meetingRoomService.update(meetingRoomDto);
   }
 
+  @RequireLogin()
   @Get('list')
   async list(
     @Query('pageNo', new DefaultValuePipe(1), generateParseIntPipe('pageNo'))
@@ -51,11 +55,13 @@ export class MeetingRoomController {
     );
   }
 
+  @RequireLogin()
   @Get(':id')
   async find(@Param('id') id: number) {
     return await this.meetingRoomService.findById(id);
   }
 
+  @RequireLogin()
   @Delete(':id')
   async delete(@Param('id') id: number) {
     return await this.meetingRoomService.delete(id);

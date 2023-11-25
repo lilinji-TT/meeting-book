@@ -1,0 +1,13 @@
+#menu-container {
+    display: flex;
+    flex-direction: row;
+}
+
+#menu-container .menu-area {
+    width: 200px;
+    margin-left: 10%;
+}
+
+#menu-container .content-area {
+    flex: 1;
+}
