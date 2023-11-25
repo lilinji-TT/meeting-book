@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
-import { BookingManage } from "./pages/BookingRoom/BookingRoom";
+import { BookingManage } from "./pages/BookingManage/BookingManage";
 import { ErrorPage } from "./pages/ErrorPage/ErrorPage";
 import { Index } from "./pages/Index/Index";
 import { InfoModify } from "./pages/InfoModify/InfoModify";

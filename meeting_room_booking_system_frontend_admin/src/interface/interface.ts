@@ -1,9 +1,10 @@
+import dayjs from "dayjs";
 import HttpRequest from "../http";
+import { SearchBooking } from "../pages/BookingManage/BookingManage";
 import { UserInfo } from "../pages/InfoModify/InfoModify";
 import { CreateMeetingRoom } from "../pages/MeetingRoomManage/CreateMeetingRoomModal";
 import { UpdateMeetingRoom } from "../pages/MeetingRoomManage/UpdateMeetingRoom";
 import { UpdatePassword } from "../pages/PasswordModify/PasswordModify";
-
 export async function login(username: string, password: string) {
   const response = await HttpRequest({
     url: "/user/admin/login",
@@ -156,4 +157,75 @@ export async function findMeetingRoom(id: number) {
   });
 
   return response;
+}
+
+export async function bookingList(
+  searchBooking: SearchBooking,
+  pageNo: number,
+  pageSize: number
+) {
+  let bookingTimeRangeStart;
+  let bookingTimeRangeEnd;
+
+  if (searchBooking.rangeStartDate && searchBooking.rangeStartTime) {
+    const rangeStartDateStr = dayjs(searchBooking.rangeStartDate).format(
+      "YYYY-MM-DD"
+    );
+    const rangeStartTimeStr = dayjs(searchBooking.rangeStartTime).format(
+      "HH:mm"
+    );
+    bookingTimeRangeStart = dayjs(
+      rangeStartDateStr + " " + rangeStartTimeStr
+    ).valueOf();
+  }
+
+  if (searchBooking.rangeEndDate && searchBooking.rangeEndTime) {
+    const rangeEndDateStr = dayjs(searchBooking.rangeEndDate).format(
+      "YYYY-MM-DD"
+    );
+    const rangeEndTimeStr = dayjs(searchBooking.rangeEndTime).format("HH:mm");
+    bookingTimeRangeEnd = dayjs(
+      rangeEndDateStr + " " + rangeEndTimeStr
+    ).valueOf();
+  }
+
+  const response = await HttpRequest({
+    url: "/booking/list",
+    method: "GET",
+    params: {
+      username: searchBooking.username,
+      meetingRoomName: searchBooking.meetingRoomName,
+      meetingRoomPosition: searchBooking.meetingRoomPosition,
+      bookingTimeRangeStart,
+      bookingTimeRangeEnd,
+      pageNo: pageNo,
+      pageSize: pageSize,
+    },
+  });
+
+  return response;
+}
+
+export async function apply(id: number) {
+  const reponse = await HttpRequest({
+    url: "/booking/apply/" + id,
+    method: "GET",
+  });
+  return reponse;
+}
+
+export async function reject(id: number) {
+  const reponse = await HttpRequest({
+    url: "/booking/reject/" + id,
+    method: "GET",
+  });
+  return reponse;
+}
+
+export async function unbind(id: number) {
+  const reponse = await HttpRequest({
+    url: "/booking/unbind/" + id,
+    method: "GET",
+  });
+  return reponse;
 }

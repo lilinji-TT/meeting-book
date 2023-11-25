@@ -5,8 +5,6 @@ import { MeetingRoom } from 'src/meeting-room/entities/meeting-room.entity';
 import { RedisService } from 'src/redis/redis.service';
 import { User } from 'src/user/entities/user.entity';
 import { Between, EntityManager, Like } from 'typeorm';
-import { CreateBookingDto } from './dto/create-booking.dto';
-import { UpdateBookingDto } from './dto/update-booking.dto';
 import { Booking } from './entities/booking.entity';
 
 @Injectable()
@@ -66,26 +64,6 @@ export class BookingService {
     booking4.endTime = new Date(Date.now() + 1000 * 60 * 60);
 
     await this.entityManager.save(Booking, booking4);
-  }
-
-  create(createBookingDto: CreateBookingDto) {
-    return 'This action adds a new booking';
-  }
-
-  findAll() {
-    return `This action returns all booking`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} booking`;
-  }
-
-  update(id: number, updateBookingDto: UpdateBookingDto) {
-    return `This action updates a #${id} booking`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} booking`;
   }
 
   async apply(id: number) {
@@ -196,6 +174,7 @@ export class BookingService {
       if (!bookingTimeRangeEnd) {
         bookingTimeRangeEnd = bookingTimeRangeStart + 60 * 60 * 1000;
       }
+
       condition.startTime = Between(
         new Date(bookingTimeRangeStart),
         new Date(bookingTimeRangeEnd),
