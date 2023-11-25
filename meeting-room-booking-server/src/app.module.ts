@@ -6,16 +6,18 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { BookingModule } from './booking/booking.module';
+import { Booking } from './booking/entities/booking.entity';
 import { EmailModule } from './email/email.module';
 import { LoginGuard } from './login.guard';
+import { MeetingRoom } from './meeting-room/entities/meeting-room.entity';
+import { MeetingRoomModule } from './meeting-room/meeting-room.module';
+import { PermissionGuard } from './permission.guard';
 import { RedisModule } from './redis/redis.module';
 import { Permission } from './user/entities/permission.entity';
 import { Role } from './user/entities/role.entity';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
-import { PermissionGuard } from './permission.guard';
-import { MeetingRoomModule } from './meeting-room/meeting-room.module';
-import { MeetingRoom } from './meeting-room/meeting-room.entity';
 
 @Module({
   imports: [
@@ -45,8 +47,8 @@ import { MeetingRoom } from './meeting-room/meeting-room.entity';
           password: configService.get('MYSQL_SERVER_ROOT_PASS'),
           database: configService.get('MYSQL_SERVER_DATABASE'),
           synchronize: true,
-          logging: true,
-          entities: [User, Role, Permission, MeetingRoom],
+          logging: false,
+          entities: [User, Role, Permission, MeetingRoom, Booking],
           poolSize: 10,
           connectorPackage: 'mysql2',
           extra: {
@@ -62,6 +64,7 @@ import { MeetingRoom } from './meeting-room/meeting-room.entity';
     JwtModule,
     AuthModule,
     MeetingRoomModule,
+    BookingModule,
   ],
   controllers: [AppController],
   providers: [
