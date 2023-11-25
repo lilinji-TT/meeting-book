@@ -14,6 +14,7 @@ import { Role } from './user/entities/role.entity';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 import { PermissionGuard } from './permission.guard';
+import { MeetingRoomModule } from './meeting-room/meeting-room.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { PermissionGuard } from './permission.guard';
     EmailModule,
     JwtModule,
     AuthModule,
+    MeetingRoomModule,
   ],
   controllers: [AppController],
   providers: [
