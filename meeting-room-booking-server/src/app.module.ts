@@ -15,6 +15,7 @@ import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 import { PermissionGuard } from './permission.guard';
 import { MeetingRoomModule } from './meeting-room/meeting-room.module';
+import { MeetingRoom } from './meeting-room/meeting-room.entity';
 
 @Module({
   imports: [
@@ -45,7 +46,7 @@ import { MeetingRoomModule } from './meeting-room/meeting-room.module';
           database: configService.get('MYSQL_SERVER_DATABASE'),
           synchronize: true,
           logging: true,
-          entities: [User, Role, Permission],
+          entities: [User, Role, Permission, MeetingRoom],
           poolSize: 10,
           connectorPackage: 'mysql2',
           extra: {
