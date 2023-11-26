@@ -9,7 +9,7 @@ export class StatisticController {
   @Get('userBookingCount')
   async userBookignCount(
     @Query('startTime') startTime: string,
-    @Query('endTime') endTime,
+    @Query('endTime') endTime: string,
   ) {
     return this.statisticService.userBookingCount(startTime, endTime);
   }
@@ -17,7 +17,7 @@ export class StatisticController {
   @Get('meetingRoomUsedCount')
   async meetingRoomUsedCount(
     @Query('startTime') startTime: string,
-    @Query('endTime') endTime,
+    @Query('endTime') endTime: string,
   ) {
     return this.statisticService.meetingRoomUsedCount(startTime, endTime);
   }

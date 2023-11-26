@@ -40,6 +40,7 @@ export class StatisticService {
       })
       .addGroupBy('b.roomId')
       .getRawMany();
+
     return res;
   }
 }
