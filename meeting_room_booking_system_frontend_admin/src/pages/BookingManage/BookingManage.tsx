@@ -100,7 +100,7 @@ export function BookingManage() {
     {
       title: "审批状态",
       dataIndex: "status",
-      width: 100,
+      width: 150,
       render: (_, record) => {
         let color = "";
         let icon = null;
@@ -179,7 +179,7 @@ export function BookingManage() {
             okText="Yes"
             cancelText="No"
           >
-            <a href="#">通过</a>
+            <Button type="link" disabled={record.status === '审批通过'}>通过</Button>
           </Popconfirm>
           <br />
           <Popconfirm
@@ -189,7 +189,7 @@ export function BookingManage() {
             okText="Yes"
             cancelText="No"
           >
-            <a href="#">驳回</a>
+            <Button type="link" disabled={record.status === '审批驳回'}>驳回</Button>
           </Popconfirm>
           <br />
           <Popconfirm
@@ -199,7 +199,7 @@ export function BookingManage() {
             okText="Yes"
             cancelText="No"
           >
-            <a href="#">解除</a>
+            <Button type="link" disabled={record.status === '已解除'}>解除</Button>
           </Popconfirm>
           <br />
         </div>

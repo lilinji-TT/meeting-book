@@ -18,6 +18,7 @@ import { Permission } from './user/entities/permission.entity';
 import { Role } from './user/entities/role.entity';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
+import { StatisticModule } from './statistic/statistic.module';
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { UserModule } from './user/user.module';
     AuthModule,
     MeetingRoomModule,
     BookingModule,
+    StatisticModule,
   ],
   controllers: [AppController],
   providers: [
