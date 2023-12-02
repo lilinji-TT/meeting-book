@@ -144,8 +144,10 @@ export function Statistics() {
           </Form.Item>
         </Form>
       </div>
-      <div className="statistics-chart" ref={containRef}></div>
-      <div className="statistics-chart" ref={containRef2}></div>
+      <div className="flex-box">
+        <div className="statistics-chart" ref={containRef}></div>
+        <div className="statistics-chart" ref={containRef2}></div>
+      </div>
     </div>
   );
 }
