@@ -229,3 +229,27 @@ export async function unbind(id: number) {
   });
   return reponse;
 }
+
+export async function meetingRoomUsedCount(startTime: string, endTime: string) {
+  const reponse = await HttpRequest({
+    url: "/statistic/meetingRoomUsedCount",
+    method: "GET",
+    params: {
+      startTime,
+      endTime,
+    },
+  });
+  return reponse;
+}
+
+export async function userBookingCount(startTime: string, endTime: string) {
+  const reponse = await HttpRequest({
+    url: "/statistic/userBookingCount",
+    method: "GET",
+    params: {
+      startTime,
+      endTime,
+    },
+  });
+  return reponse;
+}
