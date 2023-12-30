@@ -7,4 +7,4 @@ meeting-room-booking-server/.env
 
 meeting-app/node_modules/*
 
-
+.idea
