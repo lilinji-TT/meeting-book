@@ -1,5 +1,6 @@
 import { message } from "antd";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import io from "socket.io-client";
 
 declare const Peer: any;
@@ -39,63 +40,85 @@ export class Socket {
 }
 
 export function usePeerWithSocket() {
-  const [peerConfig, setPeerConfig] = useState<any>({
-    peerId: undefined,
+  const [peer, setPeer] = useState<any>({
+    instance: null,
+    config: {
+      peerId: undefined,
+    },
   });
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const roomId = searchParams.get("roomId");
+  const userId = searchParams.get("userId");
+  const nickname = searchParams.get("nickname");
+  const socketRef = useRef<any>(null);
+  const getToken = () => {
+    return localStorage.getItem("access_token");
+  };
+  function init() {
+    const token = getToken();
+    if (!token) {
+      message.warning("Token 失效，请先登录");
+      navigate("/login");
+      return;
+    }
+    const socket_options = {
+      extraHeaders: {
+        token,
+      },
+      auth: {
+        token,
+      },
+    };
+    const socket = new Socket(socket_options);
+    socketRef.current = socket;
 
-  const token = localStorage.getItem("access_token");
-  if (!token) {
-    message.warning("Token 失效，请先登录");
-    return;
+    const peer = new Peer(`${userId}-${nickname}`, {
+      path: "/peerjs",
+      host: window.location.hostname,
+      port: 3000,
+    });
+    peer.on("open", (id: string | number) => {
+      setPeer({
+        peer,
+        config: {
+          peerId: id,
+        },
+      });
+      socket.emit("join-meeting-room", {
+        roomId: roomId,
+        token,
+        userConfig: {
+          peerId: id,
+          isVideo: false,
+          isAudio: false,
+          isShareScreen: false,
+        },
+      });
+    });
+
+    peer.on("disconnected", () => {
+      peer.reconnect();
+    });
+
+    peer.on("call", async (call: any) => {
+      call.on("stream", (remoteStream: any) => {
+        const video: HTMLVideoElement = document.getElementById(
+          "share-video"
+        ) as HTMLVideoElement;
+        if (video) {
+          video.srcObject = remoteStream;
+          video.muted = false;
+          video.play();
+        }
+      });
+    });
   }
 
-  const socket_options = {
-    extraHeaders: {
-      token,
-    },
-    auth: {
-      token,
-    },
-  };
-  const socket = new Socket(socket_options);
-  const peer = new Peer(undefined, {
-    path: "/peerjs",
-    host: window.location.hostname,
-    port: 3000,
-  });
-
-  peer.on("open", (id: string | number) => {
-    socket.emit("join-meeting-room", {
-      roomId: 1,
-      token,
-      userConfig: {
-        peerId: id,
-        isVideo: false,
-        isAudio: false,
-        isShareScreen: false,
-      },
-    });
-
-    setPeerConfig({
-      peerId: id,
-    });
-  });
-
-  peer.on("disconnected", () => {
-    peer.reconnect();
-  });
-
-  peer.on("call", async (call: any) => {
-    console.log("peer on call event:", call);
-    call.answer(null);
-    call.on("stream", (remoteStream: any) => {
-      console.log("peer on stream event:", remoteStream);
-    });
-  });
-
   return {
-    peerConfig,
-    socket,
     peer,
+    socketRef,
+    init,
+    getToken,
   };
 }

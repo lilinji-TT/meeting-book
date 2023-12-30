@@ -14,6 +14,12 @@ export class MeetingRoom {
   id: number;
 
   @Column({
+    comment: '会议室种类',
+    default: 'real',
+  })
+  type: 'web' | 'real';
+
+  @Column({
     length: 50,
     comment: '会议室名字',
   })

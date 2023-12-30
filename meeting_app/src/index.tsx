@@ -8,6 +8,7 @@ import { Login } from "./pages/Login/Login";
 import { MeetingRoomList } from "./pages/MeetingRoomList/MeetingRoomList";
 import { Menu } from "./pages/Menu/Menu";
 import { Register } from "./pages/Register/Register";
+import { LiveRoom } from "./pages/Room/LiveRoom";
 import { UpdateInfo } from "./pages/UpdateInfo/UpdateInfo";
 import { UpdatePassword } from "./pages/UpdatePassword/UpdatePassword";
 
@@ -52,6 +53,10 @@ const routes = [
   {
     path: "update_password",
     element: <UpdatePassword />,
+  },
+  {
+    path: "live-room",
+    element: <LiveRoom />,
   },
 ];
 export const router = createBrowserRouter(routes);
