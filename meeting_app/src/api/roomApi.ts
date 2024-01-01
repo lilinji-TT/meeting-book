@@ -20,3 +20,12 @@ export async function searchMeetingRoomList(
 
   return response;
 }
+
+export async function unbind(id: number) {
+  const response = await request({
+    url: `/booking/unbind/${id}`,
+    method: "POST",
+  });
+
+  return response;
+}

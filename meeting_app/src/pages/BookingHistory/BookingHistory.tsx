@@ -1,64 +1,230 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import Table, { ColumnsType } from "antd/es/table";
-import { useMemo } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  Popconfirm,
+  Table,
+  TimePicker,
+  message,
+} from "antd";
+import { useForm } from "antd/es/form/Form";
+import { ColumnsType } from "antd/es/table";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+import { bookingList } from "../../api/userApi";
 import usePagination from "../../hooks/use-pagination.hook";
+import { MeetingRoomSearchResult } from "../MeetingRoomList/MeetingRoomList";
+import "./booking_history.css";
+import { unbind } from "../../api/roomApi";
+import { useUpdate } from "../../hooks/suseUpdate.hook";
 
-interface BookingHistoryProps {
+export interface SearchBooking {
+  username: string;
+  meetingRoomName: string;
+  meetingRoomPosition: string;
+  rangeStartDate: Date;
+  rangeStartTime: Date;
+  rangeEndDate: Date;
+  rangeEndTime: Date;
+}
+
+interface BookingSearchResult {
   id: number;
-  name: string;
+  startTime: string;
+  endTime: string;
   status: string;
-  description: string;
-  startTime: Date;
-  endTime: Date;
+  note: string;
+  createTime: string;
+  updateTime: string;
+  room: MeetingRoomSearchResult;
+}
+
+function getUserInfo() {
+  const userInfo = localStorage.getItem("userInfo");
+
+  if (userInfo) {
+    return JSON.parse(userInfo);
+  }
 }
 export function BookingHistory() {
-  const columns: ColumnsType<BookingHistoryProps> = useMemo(() => {
-    return [
-      {
-        title: "会议室名称",
-        dataIndex: "name",
-      },
-      {
-        title: "开始时间",
-        dataIndex: "startTime",
-      },
-      {
-        title: "结束时间",
-        dataIndex: "endTime",
-      },
-      {
-        title: "状态",
-        dataIndex: "status",
-        render: (_, rocord) => {
-          return <div>已预订</div>;
+  const [bookingSearchResult, setBookingSearchResult] = useState<
+    Array<BookingSearchResult>
+  >([]);
+
+  const columns: ColumnsType<BookingSearchResult> = [
+    {
+      title: "会议室名称",
+      dataIndex: "room",
+      render: (_, record) => record.room.name,
+    },
+    {
+      title: "开始时间",
+      dataIndex: "startTime",
+      render: (_, record) =>
+        dayjs(new Date(record.startTime)).format("YYYY-MM-DD HH:mm:ss"),
+    },
+    {
+      title: "结束时间",
+      dataIndex: "endTime",
+      render: (_, record) =>
+        dayjs(new Date(record.endTime)).format("YYYY-MM-DD HH DDD HH:mm:ss"),
+    },
+    {
+      title: "审批状态",
+      dataIndex: "status",
+      onFilter: (value, record) => record.status.startsWith(value as string),
+      filters: [
+        {
+          text: "审批通过",
+          value: "审批通过",
         },
-      },
-      {
-        title: "操作",
-        render: () => {
-          return (
-            <div>
-              <a href="#">撤销预定</a>
-            </div>
-          );
+        {
+          text: "审批驳回",
+          value: "审批驳回",
         },
-      },
-    ];
-  }, []);
+        {
+          text: "申请中",
+          value: "申请中",
+        },
+        {
+          text: "已解除",
+          value: "已解除",
+        },
+      ],
+    },
+    {
+      title: "预定时间",
+      dataIndex: "createTime",
+      render: (_, record) =>
+        dayjs(new Date(record.createTime)).format("YYYY-MM-DD HH:mm:ss"),
+    },
+    {
+      title: "备注",
+      dataIndex: "note",
+    },
+    {
+      title: "描述",
+      dataIndex: "description",
+    },
+    {
+      title: "操作",
+      render: (_, record) => record.status === '申请中' ? (
+        <div>
+          <Popconfirm
+            title="解除申请"
+            description="是否确认解除?"
+            onConfirm={() => changeStatus(record.id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <a href="#">解除预定</a>
+          </Popconfirm>
+        </div>
+      ) : null,
+    },
+  ];
+  const searchBooking = async (values: SearchBooking) => {
+    const res = await bookingList(
+      values,
+      pagination.pageNo,
+      pagination.pageSize
+    );
+
+    const { data } = res.data;
+    if (res.status === 201 || res.status === 200) {
+      setBookingSearchResult(
+        data.bookings.map((room: BookingSearchResult) => {
+          return {
+            key: room.id,
+            ...room,
+          };
+        })
+      );
+    } else {
+      message.error(data || "系统繁忙，请稍后再试");
+    }
+  };
+
+  const changeStatus = async function (id: number) {
+    const res  = await unbind(id);
+
+    if (res.status === 201 || res.status === 200) {
+        message.success("状态更新成功");
+        update();
+    } else {
+        message.error(res.data.data);
+    }
+  }
+
+  const [form] = useForm();
   const { pagination, changePage } = usePagination();
+  const update = useUpdate();
+  useEffect(() => {
+    searchBooking({
+      username: getUserInfo().username,
+      meetingRoomName: form.getFieldValue("meetingRoomName"),
+      meetingRoomPosition: form.getFieldValue("meetingRoomPosition"),
+      rangeStartDate: form.getFieldValue("rangeStartDate"),
+      rangeStartTime: form.getFieldValue("rangeStartTime"),
+      rangeEndDate: form.getFieldValue("rangeEndDate"),
+      rangeEndTime: form.getFieldValue("rangeEndTime"),
+    });
+  }, [pagination]);
 
   return (
-    <div>
-      <h1>BookingHistory</h1>
-      <Table
-        columns={columns}
-        dataSource={[]}
-        pagination={{
-          current: pagination.pageNo,
-          pageSize: pagination.pageSize,
-          onChange: changePage,
-        }}
-      ></Table>
+    <div id="bookingHistory-container">
+      <div className="bookingHistory-form">
+        <Form
+          form={form}
+          onFinish={searchBooking}
+          name="search"
+          layout="inline"
+          colon={false}
+        >
+          <Form.Item label="会议室名称" name="meetingRoomName">
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="预定开始日期" name="rangeStartDate">
+            <DatePicker />
+          </Form.Item>
+
+          <Form.Item label="预定开始时间" name="rangeStartTime">
+            <TimePicker />
+          </Form.Item>
+
+          <Form.Item label="预定结束日期" name="rangeEndDate">
+            <DatePicker />
+          </Form.Item>
+
+          <Form.Item label="预定结束时间" name="rangeEndTime">
+            <TimePicker />
+          </Form.Item>
+
+          <Form.Item label="位置" name="meetingRoomPosition">
+            <Input />
+          </Form.Item>
+
+          <Form.Item label=" ">
+            <Button type="primary" htmlType="submit">
+              搜索预定历史
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
+      <div className="bookingHistory-table">
+        <Table
+          columns={columns}
+          dataSource={bookingSearchResult}
+          pagination={{
+            current: pagination.pageNo,
+            pageSize: pagination.pageSize,
+            onChange: changePage,
+          }}
+        />
+      </div>
     </div>
   );
 }

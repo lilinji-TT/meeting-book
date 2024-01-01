@@ -1,4 +1,6 @@
+import dayjs from "dayjs";
 import request from "../http";
+import { SearchBooking } from "../pages/BookingHistory/BookingHistory";
 import { RegisterUser } from "../pages/Register/Register";
 import { UserInfo } from "../pages/UpdateInfo/UpdateInfo";
 import { UpdatePasswordProps } from "../pages/UpdatePassword/UpdatePassword";
@@ -84,4 +86,48 @@ export async function updateUserInfoCaptcha() {
   return reponse;
 }
 
+export async function bookingList(
+  searchBooking: SearchBooking,
+  pageNo: number,
+  pageSize: number
+) {
+  let bookingTimeRangeStart;
+  let bookingTimeRangeEnd;
 
+  if (searchBooking.rangeStartDate && searchBooking.rangeStartTime) {
+    const rangeStartDateStr = dayjs(searchBooking.rangeStartDate).format(
+      "YYYY-MM-DD"
+    );
+    const rangeStartTimeStr = dayjs(searchBooking.rangeStartTime).format(
+      "HH:mm"
+    );
+    bookingTimeRangeStart = dayjs(
+      rangeStartDateStr + " " + rangeStartTimeStr
+    ).valueOf();
+  }
+
+  if (searchBooking.rangeEndDate && searchBooking.rangeEndTime) {
+    const rangeEndDateStr = dayjs(searchBooking.rangeEndDate).format(
+      "YYYY-MM-DD"
+    );
+    const rangeEndTimeStr = dayjs(searchBooking.rangeEndTime).format("HH:mm");
+    bookingTimeRangeEnd = dayjs(
+      rangeEndDateStr + " " + rangeEndTimeStr
+    ).valueOf();
+  }
+  const response = await request({
+    url: "/booking/list",
+    method: "GET",
+    params: {
+      username: searchBooking.username,
+      meetingRoomName: searchBooking.meetingRoomName,
+      meetingRoomPosition: searchBooking.meetingRoomPosition,
+      bookingTimeRangeStart,
+      bookingTimeRangeEnd,
+      pageNo: pageNo,
+      pageSize: pageSize,
+    },
+  });
+
+  return response;
+}
