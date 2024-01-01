@@ -5,6 +5,7 @@ import { useForm } from "antd/es/form/Form";
 import { ColumnsType } from "antd/es/table";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { searchMeetingRoomList } from "../../api/roomApi";
+import { CreateBookingModal } from "./CreateBookingModal";
 import "./meeting_room_list.css";
 
 interface SearchMeetingRoom {
@@ -77,7 +78,15 @@ export function MeetingRoomList() {
         title: "操作",
         render: (_, record) => (
           <div>
-            <a href="#">预定</a>
+            <a
+              href="#"
+              onClick={() => {
+                setIsCreateModalOpen(true);
+                setCurrentMeetingRoom(record);
+              }}
+            >
+              预定
+            </a>
           </div>
         ),
       },
@@ -124,6 +133,10 @@ export function MeetingRoomList() {
     setPageSize(pageSize);
   }, []);
 
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [currentMeetingRoom, setCurrentMeetingRoom] =
+    useState<MeetingRoomSearchResult>();
+
   return (
     <div id="meetingRoomList-container">
       <div className="meetingRoomList-form">
@@ -164,6 +177,15 @@ export function MeetingRoomList() {
           }}
         />
       </div>
+      {currentMeetingRoom ? (
+        <CreateBookingModal
+          meetingRoom={currentMeetingRoom}
+          isOpen={isCreateModalOpen}
+          handleClose={() => {
+            setIsCreateModalOpen(false);
+          }}
+        ></CreateBookingModal>
+      ) : null}
     </div>
   );
 }
